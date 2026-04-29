@@ -35,6 +35,38 @@
       text-transform: uppercase;
     }
 
+    #deck-tabs {
+      display: flex;
+      gap: 0.5rem;
+      width: 100%;
+    }
+
+    .deck-tab {
+      flex: 1;
+      background: #161b22;
+      border: 1px solid #30363d;
+      color: #8b949e;
+      font-size: 0.8rem;
+      padding: 0.45rem 0.75rem;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.15s, border-color 0.15s, color 0.15s;
+      font-family: inherit;
+      text-align: center;
+    }
+
+    .deck-tab:hover {
+      background: #21262d;
+      border-color: #8b949e;
+      color: #e6edf3;
+    }
+
+    .deck-tab.active {
+      background: #1f3a5f;
+      border-color: #58a6ff;
+      color: #58a6ff;
+    }
+
     #progress-bar-container {
       width: 100%;
       height: 4px;
@@ -159,7 +191,11 @@
 </head>
 <body>
 <div id="app">
-  <h1>Claude Code Best Practices</h1>
+  <h1 id="deck-title">Claude Code Best Practices</h1>
+  <div id="deck-tabs">
+    <button class="deck-tab active" data-deck="0">Claude Code Best Practices</button>
+    <button class="deck-tab" data-deck="1">Prompting Best Practices</button>
+  </div>
   <div id="progress-bar-container"><div id="progress-bar"></div></div>
   <div id="card-container">
     <div id="card">
@@ -184,48 +220,99 @@
 </div>
 
 <script>
-const CARDS = [
-  { front: "What is the primary technical constraint that causes Claude Code's performance to degrade as a session progresses?", back: "The filling of the context window with conversation history and file data." },
-  { front: "Claude Code is described as an _____ coding environment because it autonomously reads files, runs commands, and makes changes.", back: "agentic" },
-  { front: "What is considered the single highest-leverage action a user can take to improve Claude's performance on a task?", back: "Providing a way for Claude to verify its own work (e.g., tests or screenshots)." },
-  { front: "Which Claude Code tool allows for visual verification of UI changes by opening browser tabs and iterating on code?", back: "The Claude in Chrome extension." },
-  { front: "What are the four phases of the recommended Claude Code workflow for complex tasks?", back: "Explore, Plan, Implement, and Commit." },
-  { front: "In the recommended workflow, which mode is used to separate research and planning from actual code execution?", back: "Plan Mode." },
-  { front: "Which keyboard shortcut allows a user to open Claude's implementation plan in a text editor for direct modification?", back: "Ctrl+G" },
-  { front: "Under what specific condition is it recommended to skip the 'Plan' phase of the workflow?", back: "When the task scope is small enough that the diff could be described in one sentence." },
-  { front: "What character is used as a shortcut to reference specific files so Claude reads them before responding?", back: "@" },
-  { front: "How can a user provide external log data to Claude Code directly from the terminal without manual copying?", back: "By piping the data into the command (e.g., cat error.log | claude)." },
-  { front: "What command is used to generate a starter CLAUDE.md file based on project structure and patterns?", back: "/init" },
-  { front: "What is the purpose of the CLAUDE.md file in a project root?", back: "To provide persistent context, such as build commands and code style rules, for every session." },
-  { front: "Why should standard language conventions be excluded from a CLAUDE.md file?", back: "Claude already knows standard conventions, and bloating the file causes it to ignore actual project-specific rules." },
-  { front: "Where should a user store global instructions that apply to all Claude sessions on their machine?", back: "~/.claude/CLAUDE.md" },
-  { front: "What is the function of the .claude.local.md file?", back: "Storing personal project-specific notes that should not be shared with a team via git." },
-  { front: "How does 'Auto mode' manage permission requests for system-modifying actions?", back: "A separate classifier model reviews commands and only blocks actions that appear risky." },
-  { front: "Which permission configuration provides OS-level isolation to restrict filesystem and network access?", back: "Sandboxing" },
-  { front: "Why is using CLI tools (like gh or aws) preferred over Claude using the GitHub API directly?", back: "CLI tools are more context-efficient and avoid rate limits associated with unauthenticated API requests." },
-  { front: "What is the command to connect external tools like Notion or Figma to Claude Code?", back: "claude mcp add" },
-  { front: "What is the primary difference between CLAUDE.md instructions and hooks?", back: "CLAUDE.md is advisory, whereas hooks are deterministic scripts that run automatically at specific points." },
-  { front: "Where are 'skills' (reusable workflows and domain knowledge) stored in a project?", back: ".claude/skills/" },
-  { front: "What feature allows Claude to delegate research tasks to a separate context window to keep the main conversation clean?", back: "Custom subagents." },
-  { front: "Which command is used to browse the marketplace for pre-bundled skills, tools, and integrations?", back: "/plugin" },
-  { front: "What is the purpose of having Claude 'interview' the user using the AskUserQuestion tool?", back: "To clarify technical implementation, edge cases, and tradeoffs for large features before starting a session." },
-  { front: "Which key stops Claude mid-action while preserving the current context for redirection?", back: "Esc" },
-  { front: "What command allows a user to restore the conversation and code state to a previous point?", back: "/rewind" },
-  { front: "When should a user run /clear instead of attempting further corrections in a session?", back: "After two failed attempts at correcting the same issue, to remove context polluted by failed approaches." },
-  { front: "What happens during 'auto compaction' when the context window is near its limit?", back: "Claude summarizes key decisions, code patterns, and file states to free up space." },
-  { front: "What is the function of the /btw command?", back: "It allows for quick questions in a dismissible overlay that do not enter the conversation history or grow the context." },
-  { front: "How can a user continue a previous Claude Code conversation in the terminal?", back: "By running claude --continue" },
-  { front: "Which CLI flag is used to run Claude non-interactively for CI pipelines or scripts?", back: "-p" },
-  { front: "In the 'Writer/Reviewer' pattern, how do multiple Claude sessions improve code quality?", back: "A fresh context ensures the reviewer session is not biased toward the implementation decisions of the writer session." },
-  { front: "What does the --allowedTools flag do when running Claude in non-interactive mode?", back: "It restricts the specific tools Claude can use during automated batch operations for safety." },
-  { front: "What failure pattern is characterized by asking unrelated questions in a single long session, leading to noisy context?", back: "The kitchen sink session." },
-  { front: "How can a user ensure critical context survives the summarization process during compaction?", back: "By adding specific preservation instructions to the CLAUDE.md file." },
-  { front: "Concept: Model Context Protocol (MCP)", back: "Definition: An open protocol that allows Claude Code to connect to external data sources and tools like databases or Figma." },
-  { front: "Why is 'Plan Mode' specifically recommended for changes modifying multiple files?", back: "It allows the user to review the intended logic and architectural approach before Claude executes complex file writes." },
-  { front: "What is the benefit of naming sessions with the /rename command?", back: "It allows users to organize and find specific workstreams when using the --resume command later." },
+const DECKS = [
+  {
+    title: "Claude Code Best Practices",
+    cards: [
+      { front: "What is the primary technical constraint that causes Claude Code's performance to degrade as a session progresses?", back: "The filling of the context window with conversation history and file data." },
+      { front: "Claude Code is described as an _____ coding environment because it autonomously reads files, runs commands, and makes changes.", back: "agentic" },
+      { front: "What is considered the single highest-leverage action a user can take to improve Claude's performance on a task?", back: "Providing a way for Claude to verify its own work (e.g., tests or screenshots)." },
+      { front: "Which Claude Code tool allows for visual verification of UI changes by opening browser tabs and iterating on code?", back: "The Claude in Chrome extension." },
+      { front: "What are the four phases of the recommended Claude Code workflow for complex tasks?", back: "Explore, Plan, Implement, and Commit." },
+      { front: "In the recommended workflow, which mode is used to separate research and planning from actual code execution?", back: "Plan Mode." },
+      { front: "Which keyboard shortcut allows a user to open Claude's implementation plan in a text editor for direct modification?", back: "Ctrl+G" },
+      { front: "Under what specific condition is it recommended to skip the 'Plan' phase of the workflow?", back: "When the task scope is small enough that the diff could be described in one sentence." },
+      { front: "What character is used as a shortcut to reference specific files so Claude reads them before responding?", back: "@" },
+      { front: "How can a user provide external log data to Claude Code directly from the terminal without manual copying?", back: "By piping the data into the command (e.g., cat error.log | claude)." },
+      { front: "What command is used to generate a starter CLAUDE.md file based on project structure and patterns?", back: "/init" },
+      { front: "What is the purpose of the CLAUDE.md file in a project root?", back: "To provide persistent context, such as build commands and code style rules, for every session." },
+      { front: "Why should standard language conventions be excluded from a CLAUDE.md file?", back: "Claude already knows standard conventions, and bloating the file causes it to ignore actual project-specific rules." },
+      { front: "Where should a user store global instructions that apply to all Claude sessions on their machine?", back: "~/.claude/CLAUDE.md" },
+      { front: "What is the function of the .claude.local.md file?", back: "Storing personal project-specific notes that should not be shared with a team via git." },
+      { front: "How does 'Auto mode' manage permission requests for system-modifying actions?", back: "A separate classifier model reviews commands and only blocks actions that appear risky." },
+      { front: "Which permission configuration provides OS-level isolation to restrict filesystem and network access?", back: "Sandboxing" },
+      { front: "Why is using CLI tools (like gh or aws) preferred over Claude using the GitHub API directly?", back: "CLI tools are more context-efficient and avoid rate limits associated with unauthenticated API requests." },
+      { front: "What is the command to connect external tools like Notion or Figma to Claude Code?", back: "claude mcp add" },
+      { front: "What is the primary difference between CLAUDE.md instructions and hooks?", back: "CLAUDE.md is advisory, whereas hooks are deterministic scripts that run automatically at specific points." },
+      { front: "Where are 'skills' (reusable workflows and domain knowledge) stored in a project?", back: ".claude/skills/" },
+      { front: "What feature allows Claude to delegate research tasks to a separate context window to keep the main conversation clean?", back: "Custom subagents." },
+      { front: "Which command is used to browse the marketplace for pre-bundled skills, tools, and integrations?", back: "/plugin" },
+      { front: "What is the purpose of having Claude 'interview' the user using the AskUserQuestion tool?", back: "To clarify technical implementation, edge cases, and tradeoffs for large features before starting a session." },
+      { front: "Which key stops Claude mid-action while preserving the current context for redirection?", back: "Esc" },
+      { front: "What command allows a user to restore the conversation and code state to a previous point?", back: "/rewind" },
+      { front: "When should a user run /clear instead of attempting further corrections in a session?", back: "After two failed attempts at correcting the same issue, to remove context polluted by failed approaches." },
+      { front: "What happens during 'auto compaction' when the context window is near its limit?", back: "Claude summarizes key decisions, code patterns, and file states to free up space." },
+      { front: "What is the function of the /btw command?", back: "It allows for quick questions in a dismissible overlay that do not enter the conversation history or grow the context." },
+      { front: "How can a user continue a previous Claude Code conversation in the terminal?", back: "By running claude --continue" },
+      { front: "Which CLI flag is used to run Claude non-interactively for CI pipelines or scripts?", back: "-p" },
+      { front: "In the 'Writer/Reviewer' pattern, how do multiple Claude sessions improve code quality?", back: "A fresh context ensures the reviewer session is not biased toward the implementation decisions of the writer session." },
+      { front: "What does the --allowedTools flag do when running Claude in non-interactive mode?", back: "It restricts the specific tools Claude can use during automated batch operations for safety." },
+      { front: "What failure pattern is characterized by asking unrelated questions in a single long session, leading to noisy context?", back: "The kitchen sink session." },
+      { front: "How can a user ensure critical context survives the summarization process during compaction?", back: "By adding specific preservation instructions to the CLAUDE.md file." },
+      { front: "Concept: Model Context Protocol (MCP)", back: "Definition: An open protocol that allows Claude Code to connect to external data sources and tools like databases or Figma." },
+      { front: "Why is 'Plan Mode' specifically recommended for changes modifying multiple files?", back: "It allows the user to review the intended logic and architectural approach before Claude executes complex file writes." },
+      { front: "What is the benefit of naming sessions with the /rename command?", back: "It allows users to organize and find specific workstreams when using the --resume command later." },
+    ]
+  },
+  {
+    title: "Prompting Best Practices",
+    cards: [
+      { front: "How does Claude 4.7 determine its response length and verbosity?", back: "It calibrates length based on the judged complexity of the task." },
+      { front: "Which specific effort level is recommended for coding and agentic use cases in Claude 4.7?", back: "xhigh" },
+      { front: "What is the minimum recommended effort level for intelligence-sensitive use cases in Claude 4.7?", back: "high" },
+      { front: "Which effort level is reserved for latency-sensitive workloads that are not intelligence-sensitive?", back: "low" },
+      { front: "What is a potential risk of using the 'max' effort setting in Claude 4.7?", back: "It can be prone to overthinking and show diminishing returns." },
+      { front: "How does tool usage in Claude 4.7 generally compare to Claude 4.6?", back: "Claude 4.7 tends to use tools less often and reasoning more." },
+      { front: "What is the recommended starting max output token budget for Claude 4.7 at high effort levels?", back: "64k tokens" },
+      { front: "Compared to Claude 4.6, how does Claude 4.7 interpret prompt instructions?", back: "It interprets prompts more literally and explicitly." },
+      { front: "What shift in prose style is noted for Claude 4.7 compared to the 'warmer' 4.6?", back: "It is more direct and opinionated with fewer emojis." },
+      { front: "Claude 4.7's default design style typically features _____ display type and warm cream backgrounds.", back: "serif" },
+      { front: "To achieve design variety in Claude 4.7, what approach is recommended instead of relying on temperature?", back: "Have the model propose multiple options before building." },
+      { front: "Why does Claude 4.7 tend to use more tokens in interactive coding settings than in autonomous ones?", back: "It performs more reasoning after each user turn to improve long-horizon coherence." },
+      { front: "In code-review tasks, Claude 4.7 may show lower recall if the prompt instructs it to 'be _____'.", back: "conservative" },
+      { front: "What is the maximum resolution supported for computer use in Claude 4.7?", back: "2576px / 3.75MP" },
+      { front: "Which resolution is cited as a good balance of performance and cost for computer use tasks?", back: "1080p" },
+      { front: "The 'Golden Rule' of prompting suggests showing your prompt to a _____ to check for clarity.", back: "colleague" },
+      { front: "How many examples are recommended for multishot prompting to achieve best results?", back: "3–5" },
+      { front: "Which structural element should be used to wrap multiple examples in a prompt?", back: "<examples> tags" },
+      { front: "Where should a user place a query within a long context prompt (20k+ tokens) for best results?", back: "At the end, after the data and instructions." },
+      { front: "In long document tasks, what should Claude be asked to do before carrying out a task to improve grounding?", back: "Quote relevant parts of the documents." },
+      { front: "What is the default formatting for mathematical expressions in Claude 4.6?", back: "LaTeX" },
+      { front: "Starting with Claude 4.6, what type of response is no longer supported on the last assistant turn?", back: "Prefilled responses" },
+      { front: "Claude 4.6 models use _____ thinking, where the model dynamically decides when to reason.", back: "adaptive" },
+      { front: "Which parameter controls thinking depth and intelligence-to-token tradeoff in Claude 4.6 and 4.7?", back: "effort" },
+      { front: "What tag should be used in multishot examples to show Claude a desired reasoning pattern?", back: "<thinking> tags" },
+      { front: "To maintain state over multiple context windows, Claude should track tests in a structured _____ file.", back: "JSON" },
+      { front: "What tool provides a log of actions and checkpoints for state tracking across multiple sessions?", back: "git" },
+      { front: "What is the recommended structured approach for complex research tasks to ensure source verification?", back: "A multi-step process involving initial search, deep dive, and critique." },
+      { front: "Claude 4.6 may over-spawn _____ if instructions from previous models are not dialed back.", back: "subagents" },
+      { front: "What is the most common chaining pattern used for draft refinement?", back: "Self-correction (Draft → Review → Refine)" },
+      { front: "To improve image analysis performance, what specific tool/skill should be given to Claude?", back: "A crop tool" },
+      { front: "When migrating from Sonnet 4.5 to 4.6, what is the default effort level if not specified?", back: "high" },
+      { front: "What effort level is recommended for Sonnet 4.6 in high-volume, latency-sensitive workloads?", back: "low" },
+      { front: "Which Claude model is the best choice for the hardest, long-horizon problems like large-scale code migrations?", back: "Opus 4.7" },
+      { front: "For Claude to take proactive action in a tool-use scenario, what should be added to the system prompt?", back: "Explicit instructions to implement changes rather than just suggesting them." },
+      { front: "What is the 'house style' background color hex code for Claude 4.7's default design instinct?", back: "#F4F1EA" },
+      { front: "To prevent 'AI slop' in frontend design, what should be included in the system prompt?", back: "Instructions for distinctive aesthetics and specific frontend design skills." },
+      { front: "Which effort level balances token usage and intelligence for most sensitive use cases?", back: "high" },
+      { front: "Claude's ability to track its remaining token budget is known as _____.", back: "context awareness" },
+      { front: "What is the consequence of running a complex task at 'low' effort in Claude 4.7?", back: "Risk of under-thinking and literal task-scoping." },
+    ]
+  }
 ];
 
-let deck = [...Array(CARDS.length).keys()];
+let activeDeckIndex = 0;
+let deck = [];
 let currentIndex = 0;
 let isFlipped = false;
 
@@ -234,9 +321,21 @@ const frontText = document.getElementById('front-text');
 const backText = document.getElementById('back-text');
 const counter = document.getElementById('counter');
 const progressBar = document.getElementById('progress-bar');
+const deckTitle = document.getElementById('deck-title');
+
+function loadDeck(index) {
+  activeDeckIndex = index;
+  deck = [...Array(DECKS[index].cards.length).keys()];
+  currentIndex = 0;
+  deckTitle.textContent = DECKS[index].title;
+  document.querySelectorAll('.deck-tab').forEach((btn, i) => {
+    btn.classList.toggle('active', i === index);
+  });
+  render();
+}
 
 function render() {
-  const c = CARDS[deck[currentIndex]];
+  const c = DECKS[activeDeckIndex].cards[deck[currentIndex]];
   frontText.textContent = c.front;
   backText.textContent = c.back;
   counter.textContent = `Card ${currentIndex + 1} of ${deck.length}`;
@@ -251,6 +350,10 @@ function shuffle(arr) {
     [arr[i], arr[j]] = [arr[j], arr[i]];
   }
 }
+
+document.querySelectorAll('.deck-tab').forEach((btn) => {
+  btn.addEventListener('click', () => loadDeck(parseInt(btn.dataset.deck)));
+});
 
 card.addEventListener('click', () => {
   isFlipped = !isFlipped;
@@ -272,7 +375,7 @@ document.getElementById('shuffle').addEventListener('click', () => {
 });
 
 document.getElementById('reset').addEventListener('click', () => {
-  deck = [...Array(CARDS.length).keys()];
+  deck = [...Array(DECKS[activeDeckIndex].cards.length).keys()];
   currentIndex = 0;
   render();
 });
@@ -289,7 +392,7 @@ document.addEventListener('keydown', (e) => {
   }
 });
 
-render();
+loadDeck(0);
 </script>
 </body>
 </html>
