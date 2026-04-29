@@ -1,0 +1,40 @@
+How does Claude 4.7 determine its response length and verbosity?,It calibrates length based on the judged complexity of the task.
+Which specific effort level is recommended for coding and agentic use cases in Claude 4.7?,xhigh
+What is the minimum recommended effort level for intelligence-sensitive use cases in Claude 4.7?,high
+Which effort level is reserved for latency-sensitive workloads that are not intelligence-sensitive?,low
+What is a potential risk of using the 'max' effort setting in Claude 4.7?,It can be prone to overthinking and show diminishing returns.
+How does tool usage in Claude 4.7 generally compare to Claude 4.6?,Claude 4.7 tends to use tools less often and reasoning more.
+What is the recommended starting max output token budget for Claude 4.7 at high effort levels?,64k tokens
+"Compared to Claude 4.6, how does Claude 4.7 interpret prompt instructions?",It interprets prompts more literally and explicitly.
+What shift in prose style is noted for Claude 4.7 compared to the 'warmer' 4.6?,It is more direct and opinionated with fewer emojis.
+Claude 4.7's default design style typically features _____ display type and warm cream backgrounds.,serif
+"To achieve design variety in Claude 4.7, what approach is recommended instead of relying on temperature?",Have the model propose multiple options before building.
+Why does Claude 4.7 tend to use more tokens in interactive coding settings than in autonomous ones?,It performs more reasoning after each user turn to improve long-horizon coherence.
+"In code-review tasks, Claude 4.7 may show lower recall if the prompt instructs it to 'be _____'.",conservative
+What is the maximum resolution supported for computer use in Claude 4.7?,$2576$px / $3.75$MP
+Which resolution is cited as a good balance of performance and cost for computer use tasks?,1080p
+The 'Golden Rule' of prompting suggests showing your prompt to a _____ to check for clarity.,colleague
+How many examples are recommended for multishot prompting to achieve best results?,3-5
+Which structural element should be used to wrap multiple examples in a prompt?,<examples> tags
+Where should a user place a query within a long context prompt (20k+ tokens) for best results?,"At the end, after the data and instructions."
+"In long document tasks, what should Claude be asked to do before carrying out a task to improve grounding?",Quote relevant parts of the documents.
+What is the default formatting for mathematical expressions in Claude 4.6?,LaTeX
+"Starting with Claude 4.6, what type of response is no longer supported on the last assistant turn?",Prefilled responses
+"Claude 4.6 models use _____ thinking, where the model dynamically decides when to reason.",adaptive
+Which parameter controls thinking depth and intelligence-to-token tradeoff in Claude 4.6 and 4.7?,effort
+What tag should be used in multishot examples to show Claude a desired reasoning pattern?,<thinking> tags
+"To maintain state over multiple context windows, Claude should track tests in a structured _____ file.",JSON
+What tool provides a log of actions and checkpoints for state tracking across multiple sessions?,git
+What is the recommended structured approach for complex research tasks to ensure source verification?,"A multi-step process involving initial search, deep dive, and critique."
+Claude 4.6 may over-spawn _____ if instructions from previous models are not dialed back.,subagents
+What is the most common chaining pattern used for draft refinement?,Self-correction (Draft -> Review -> Refine)
+"To improve image analysis performance, what specific tool/skill should be given to Claude?",A crop tool
+"When migrating from Sonnet 4.5 to 4.6, what is the default effort level if not specified?",high
+"What effort level is recommended for Sonnet 4.6 in high-volume, latency-sensitive workloads?",low
+"Which Claude model is the best choice for the hardest, long-horizon problems like large-scale code migrations?",Opus 4.7
+"For Claude to take proactive action in a tool-use scenario, what should be added to the system prompt?",Explicit instructions to implement changes rather than just suggesting them.
+What is the 'house style' background color hex code for Claude 4.7's default design instinct?,#F4F1EA
+"To prevent 'AI slop' in frontend design, what should be included in the system prompt?",Instructions for distinctive aesthetics and specific frontend design skills.
+Which effort level balances token usage and intelligence for most sensitive use cases?,high
+Claude's ability to track its remaining token budget is known as _____.,context awareness
+What is the consequence of runing a complex task at 'low' effort in Claude 4.7?,Risk of under-thinking and literal task-scoping.
