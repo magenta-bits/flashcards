@@ -1,0 +1,38 @@
+What is the primary technical constraint that causes Claude Code's performance to degrade as a session progresses?,The filling of the context window with conversation history and file data.
+"Claude Code is described as an _____ coding environment because it autonomously reads files, runs commands, and makes changes.",agentic
+What is considered the single highest-leverage action a user can take to improve Claude's performance on a task?,"Providing a way for Claude to verify its own work (e.g., tests or screenshots)."
+Which Claude Code tool allows for visual verification of UI changes by opening browser tabs and iterating on code?,The Claude in Chrome extension.
+What are the four phases of the recommended Claude Code workflow for complex tasks?,"Explore, Plan, Implement, and Commit."
+"In the recommended workflow, which mode is used to separate research and planning from actual code execution?",Plan Mode.
+Which keyboard shortcut allows a user to open Claude's implementation plan in a text editor for direct modification?,Ctrl+G
+Under what specific condition is it recommended to skip the 'Plan' phase of the workflow?,When the task scope is small enough that the diff could be described in one sentence.
+What character is used as a shortcut to reference specific files so Claude reads them before responding?,@
+How can a user provide external log data to Claude Code directly from the terminal without manual copying?,"By piping the data into the command (e.g., cat error.log | claude)."
+What command is used to generate a starter CLAUDE.md file based on project structure and patterns?,/init
+What is the purpose of the CLAUDE.md file in a project root?,"To provide persistent context, such as build commands and code style rules, for every session."
+Why should standard language conventions be excluded from a CLAUDE.md file?,"Claude already knows standard conventions, and bloating the file causes it to ignore actual project-specific rules."
+Where should a user store global instructions that apply to all Claude sessions on their machine?,~/.claude/CLAUDE.md
+What is the function of the .claude.local.md file?,Storing personal project-specific notes that should not be shared with a team via git.
+How does 'Auto mode' manage permission requests for system-modifying actions?,A separate classifier model reviews commands and only blocks actions that appear risky.
+Which permission configuration provides OS-level isolation to restrict filesystem and network access?,Sandboxing
+Why is using CLI tools (like gh or aws) preferred over Claude using the GitHub API directly?,CLI tools are more context-efficient and avoid rate limits associated with unauthenticated API requests.
+What is the command to connect external tools like Notion or Figma to Claude Code?,claude mcp add
+What is the primary difference between CLAUDE.md instructions and hooks?,"CLAUDE.md is advisory, whereas hooks are deterministic scripts that run automatically at specific points."
+Where are 'skills' (reusable workflows and domain knowledge) stored in a project?,.claude/skills/
+What feature allows Claude to delegate research tasks to a separate context window to keep the main conversation clean?,Custom subagents.
+"Which command is used to browse the marketplace for pre-bundled skills, tools, and integrations?",/plugin
+What is the purpose of having Claude 'interview' the user using the AskUserQuestion tool?,"To clarify technical implementation, edge cases, and tradeoffs for large features before starting a session."
+Which key stops Claude mid-action while preserving the current context for redirection?,Esc
+What command allows a user to restore the conversation and code state to a previous point?,/rewind
+When should a user run /clear instead of attempting further corrections in a session?,"After two failed attempts at correcting the same issue, to remove context polluted by failed approaches."
+What happens during 'auto compaction' when the context window is near its limit?,"Claude summarizes key decisions, code patterns, and file states to free up space."
+What is the function of the /btw command?,It allows for quick questions in a dismissible overlay that do not enter the conversation history or grow the context.
+How can a user continue a previous Claude Code conversation in the terminal?,By running claude --continue
+Which CLI flag is used to run Claude non-interactively for CI pipelines or scripts?,-p
+"In the 'Writer/Reviewer' pattern, how do multiple Claude sessions improve code quality?",A fresh context ensures the reviewer session is not biased toward the implementation decisions of the writer session.
+What does the --allowedTools flag do when running Claude in non-interactive mode?,It restricts the specific tools Claude can use during automated batch operations for safety.
+"What failure pattern is characterized by asking unrelated questions in a single long session, leading to noisy context?",The kitchen sink session.
+How can a user ensure critical context survives the summarization process during compaction?,By adding specific preservation instructions to the CLAUDE.md file.
+Concept: Model Context Protocol (MCP),Definition: An open protocol that allows Claude Code to connect to external data sources and tools like databases or Figma.
+Why is 'Plan Mode' specifically recommended for changes modifying multiple files?,It allows the user to review the intended logic and architectural approach before Claude executes complex file writes.
+What is the benefit of naming sessions with the /rename command?,It allows users to organize and find specific workstreams when using the --resume command later.
