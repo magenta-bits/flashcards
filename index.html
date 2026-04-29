@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Claude Code Flashcards</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: #0d1117;
+      color: #e6edf3;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+    }
+
+    #app {
+      width: 100%;
+      max-width: 680px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1.25rem;
+    }
+
+    h1 {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #8b949e;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    #progress-bar-container {
+      width: 100%;
+      height: 4px;
+      background: #21262d;
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    #progress-bar {
+      height: 100%;
+      background: #58a6ff;
+      border-radius: 2px;
+      transition: width 0.3s ease;
+    }
+
+    #card-container {
+      width: 100%;
+      perspective: 1200px;
+      cursor: pointer;
+    }
+
+    #card {
+      position: relative;
+      width: 100%;
+      min-height: 280px;
+      transform-style: preserve-3d;
+      transition: transform 0.5s ease;
+    }
+
+    #card.flipped {
+      transform: rotateY(180deg);
+    }
+
+    .face {
+      position: absolute;
+      inset: 0;
+      min-height: 280px;
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+      border-radius: 12px;
+      border: 1px solid #30363d;
+      padding: 2rem 2rem 3rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow-y: auto;
+    }
+
+    .face.front {
+      background: #161b22;
+    }
+
+    .face.back {
+      background: #1a2233;
+      border-color: #2d3a50;
+      transform: rotateY(180deg);
+    }
+
+    .face p {
+      font-size: 1.15rem;
+      line-height: 1.6;
+      text-align: center;
+      color: #e6edf3;
+    }
+
+    .face.back p {
+      color: #cdd9e5;
+    }
+
+    .hint {
+      position: absolute;
+      bottom: 0.9rem;
+      font-size: 0.75rem;
+      color: #484f58;
+      letter-spacing: 0.03em;
+      pointer-events: none;
+    }
+
+    #card.flipped .hint { opacity: 0; }
+
+    #counter {
+      font-size: 0.875rem;
+      color: #8b949e;
+    }
+
+    #nav {
+      display: flex;
+      gap: 0.75rem;
+    }
+
+    #actions {
+      display: flex;
+      gap: 0.75rem;
+    }
+
+    button {
+      background: #21262d;
+      border: 1px solid #30363d;
+      color: #e6edf3;
+      font-size: 0.875rem;
+      padding: 0.5rem 1.25rem;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.15s, border-color 0.15s;
+      font-family: inherit;
+    }
+
+    button:hover {
+      background: #30363d;
+      border-color: #8b949e;
+    }
+
+    button:active {
+      background: #3c444d;
+    }
+
+    @media (max-width: 480px) {
+      .face p { font-size: 1rem; }
+      button { padding: 0.5rem 0.9rem; font-size: 0.8rem; }
+    }
+  </style>
+</head>
+<body>
+<div id="app">
+  <h1>Claude Code Best Practices</h1>
+  <div id="progress-bar-container"><div id="progress-bar"></div></div>
+  <div id="card-container">
+    <div id="card">
+      <div class="face front">
+        <p id="front-text"></p>
+        <span class="hint">Click to reveal answer</span>
+      </div>
+      <div class="face back">
+        <p id="back-text"></p>
+      </div>
+    </div>
+  </div>
+  <div id="counter"></div>
+  <div id="nav">
+    <button id="prev">&#8592; Prev</button>
+    <button id="next">Next &#8594;</button>
+  </div>
+  <div id="actions">
+    <button id="shuffle">Shuffle</button>
+    <button id="reset">Reset Order</button>
+  </div>
+</div>
+
+<script>
+const CARDS = [
+  { front: "What is the primary technical constraint that causes Claude Code's performance to degrade as a session progresses?", back: "The filling of the context window with conversation history and file data." },
+  { front: "Claude Code is described as an _____ coding environment because it autonomously reads files, runs commands, and makes changes.", back: "agentic" },
+  { front: "What is considered the single highest-leverage action a user can take to improve Claude's performance on a task?", back: "Providing a way for Claude to verify its own work (e.g., tests or screenshots)." },
+  { front: "Which Claude Code tool allows for visual verification of UI changes by opening browser tabs and iterating on code?", back: "The Claude in Chrome extension." },
+  { front: "What are the four phases of the recommended Claude Code workflow for complex tasks?", back: "Explore, Plan, Implement, and Commit." },
+  { front: "In the recommended workflow, which mode is used to separate research and planning from actual code execution?", back: "Plan Mode." },
+  { front: "Which keyboard shortcut allows a user to open Claude's implementation plan in a text editor for direct modification?", back: "Ctrl+G" },
+  { front: "Under what specific condition is it recommended to skip the 'Plan' phase of the workflow?", back: "When the task scope is small enough that the diff could be described in one sentence." },
+  { front: "What character is used as a shortcut to reference specific files so Claude reads them before responding?", back: "@" },
+  { front: "How can a user provide external log data to Claude Code directly from the terminal without manual copying?", back: "By piping the data into the command (e.g., cat error.log | claude)." },
+  { front: "What command is used to generate a starter CLAUDE.md file based on project structure and patterns?", back: "/init" },
+  { front: "What is the purpose of the CLAUDE.md file in a project root?", back: "To provide persistent context, such as build commands and code style rules, for every session." },
+  { front: "Why should standard language conventions be excluded from a CLAUDE.md file?", back: "Claude already knows standard conventions, and bloating the file causes it to ignore actual project-specific rules." },
+  { front: "Where should a user store global instructions that apply to all Claude sessions on their machine?", back: "~/.claude/CLAUDE.md" },
+  { front: "What is the function of the .claude.local.md file?", back: "Storing personal project-specific notes that should not be shared with a team via git." },
+  { front: "How does 'Auto mode' manage permission requests for system-modifying actions?", back: "A separate classifier model reviews commands and only blocks actions that appear risky." },
+  { front: "Which permission configuration provides OS-level isolation to restrict filesystem and network access?", back: "Sandboxing" },
+  { front: "Why is using CLI tools (like gh or aws) preferred over Claude using the GitHub API directly?", back: "CLI tools are more context-efficient and avoid rate limits associated with unauthenticated API requests." },
+  { front: "What is the command to connect external tools like Notion or Figma to Claude Code?", back: "claude mcp add" },
+  { front: "What is the primary difference between CLAUDE.md instructions and hooks?", back: "CLAUDE.md is advisory, whereas hooks are deterministic scripts that run automatically at specific points." },
+  { front: "Where are 'skills' (reusable workflows and domain knowledge) stored in a project?", back: ".claude/skills/" },
+  { front: "What feature allows Claude to delegate research tasks to a separate context window to keep the main conversation clean?", back: "Custom subagents." },
+  { front: "Which command is used to browse the marketplace for pre-bundled skills, tools, and integrations?", back: "/plugin" },
+  { front: "What is the purpose of having Claude 'interview' the user using the AskUserQuestion tool?", back: "To clarify technical implementation, edge cases, and tradeoffs for large features before starting a session." },
+  { front: "Which key stops Claude mid-action while preserving the current context for redirection?", back: "Esc" },
+  { front: "What command allows a user to restore the conversation and code state to a previous point?", back: "/rewind" },
+  { front: "When should a user run /clear instead of attempting further corrections in a session?", back: "After two failed attempts at correcting the same issue, to remove context polluted by failed approaches." },
+  { front: "What happens during 'auto compaction' when the context window is near its limit?", back: "Claude summarizes key decisions, code patterns, and file states to free up space." },
+  { front: "What is the function of the /btw command?", back: "It allows for quick questions in a dismissible overlay that do not enter the conversation history or grow the context." },
+  { front: "How can a user continue a previous Claude Code conversation in the terminal?", back: "By running claude --continue" },
+  { front: "Which CLI flag is used to run Claude non-interactively for CI pipelines or scripts?", back: "-p" },
+  { front: "In the 'Writer/Reviewer' pattern, how do multiple Claude sessions improve code quality?", back: "A fresh context ensures the reviewer session is not biased toward the implementation decisions of the writer session." },
+  { front: "What does the --allowedTools flag do when running Claude in non-interactive mode?", back: "It restricts the specific tools Claude can use during automated batch operations for safety." },
+  { front: "What failure pattern is characterized by asking unrelated questions in a single long session, leading to noisy context?", back: "The kitchen sink session." },
+  { front: "How can a user ensure critical context survives the summarization process during compaction?", back: "By adding specific preservation instructions to the CLAUDE.md file." },
+  { front: "Concept: Model Context Protocol (MCP)", back: "Definition: An open protocol that allows Claude Code to connect to external data sources and tools like databases or Figma." },
+  { front: "Why is 'Plan Mode' specifically recommended for changes modifying multiple files?", back: "It allows the user to review the intended logic and architectural approach before Claude executes complex file writes." },
+  { front: "What is the benefit of naming sessions with the /rename command?", back: "It allows users to organize and find specific workstreams when using the --resume command later." },
+];
+
+let deck = [...Array(CARDS.length).keys()];
+let currentIndex = 0;
+let isFlipped = false;
+
+const card = document.getElementById('card');
+const frontText = document.getElementById('front-text');
+const backText = document.getElementById('back-text');
+const counter = document.getElementById('counter');
+const progressBar = document.getElementById('progress-bar');
+
+function render() {
+  const c = CARDS[deck[currentIndex]];
+  frontText.textContent = c.front;
+  backText.textContent = c.back;
+  counter.textContent = `Card ${currentIndex + 1} of ${deck.length}`;
+  progressBar.style.width = `${((currentIndex + 1) / deck.length) * 100}%`;
+  card.classList.remove('flipped');
+  isFlipped = false;
+}
+
+function shuffle(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+}
+
+card.addEventListener('click', () => {
+  isFlipped = !isFlipped;
+  card.classList.toggle('flipped', isFlipped);
+});
+
+document.getElementById('prev').addEventListener('click', () => {
+  if (currentIndex > 0) { currentIndex--; render(); }
+});
+
+document.getElementById('next').addEventListener('click', () => {
+  if (currentIndex < deck.length - 1) { currentIndex++; render(); }
+});
+
+document.getElementById('shuffle').addEventListener('click', () => {
+  shuffle(deck);
+  currentIndex = 0;
+  render();
+});
+
+document.getElementById('reset').addEventListener('click', () => {
+  deck = [...Array(CARDS.length).keys()];
+  currentIndex = 0;
+  render();
+});
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'ArrowLeft') {
+    if (currentIndex > 0) { currentIndex--; render(); }
+  } else if (e.key === 'ArrowRight') {
+    if (currentIndex < deck.length - 1) { currentIndex++; render(); }
+  } else if (e.key === ' ') {
+    e.preventDefault();
+    isFlipped = !isFlipped;
+    card.classList.toggle('flipped', isFlipped);
+  }
+});
+
+render();
+</script>
+</body>
+</html>
