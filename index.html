@@ -204,6 +204,7 @@
   <div id="deck-tabs">
     <button class="deck-tab active" data-deck="0">Claude Code Best Practices</button>
     <button class="deck-tab" data-deck="1">Prompting Best Practices</button>
+    <button class="deck-tab" data-deck="2">How Claude Code Works</button>
   </div>
   <div id="progress-bar-container"><div id="progress-bar"></div></div>
   <div id="card-container">
@@ -316,6 +317,61 @@ const DECKS = [
       { front: "Which effort level balances token usage and intelligence for most sensitive use cases?", back: "high" },
       { front: "Claude's ability to track its remaining token budget is known as _____.", back: "context awareness" },
       { front: "What is the consequence of running a complex task at 'low' effort in Claude 4.7?", back: "Risk of under-thinking and literal task-scoping." },
+    ]
+  },
+  {
+    title: "How Claude Code Works",
+    cards: [
+      { front: "What three phases constitute the agentic loop in Claude Code?", back: "Gather context, take action, and verify results." },
+      { front: "How does Claude Code function as an 'agentic harness' for the underlying model?", back: "It provides tools, context management, and an execution environment to enable autonomous action." },
+      { front: "Which Claude model is optimized for the majority of standard coding tasks?", back: "Claude Sonnet." },
+      { front: "When should a developer switch to using Claude Opus within Claude Code?", back: "When a task requires stronger reasoning for complex architectural decisions." },
+      { front: "Identify the command used to switch between different models during an active session.", back: "/model." },
+      { front: "Into what five categories do the built-in Claude Code tools generally fall?", back: "File operations, search, execution, web, and code intelligence." },
+      { front: "What does Claude Code's 'Search' tool category allow the agent to do?", back: "Find files by pattern, search content with regex, and explore codebases." },
+      { front: "Under what condition can Claude access files located outside the current project directory?", back: "It can only access external files with explicit user permission." },
+      { front: "What specific git-related data is available to Claude Code by default?", back: "The current branch, uncommitted changes, and recent commit history." },
+      { front: "What is the purpose of the project-specific CLAUDE.md file?", back: "It stores persistent instructions, conventions, and context for Claude to use in every session." },
+      { front: "How much of the MEMORY.md file is loaded at the start of a session?", back: "The first 200 lines or 25KB, whichever limit is reached first." },
+      { front: "Which execution environment runs Claude Code on Anthropic-managed virtual machines?", back: "The Cloud environment." },
+      { front: "How does the 'Remote Control' environment differ from the standard local environment?", back: "It allows the user to interact via a browser UI while executing code on their local machine." },
+      { front: "Where does Claude Code store local session conversation history?", back: "In plaintext JSONL files located under ~/.claude/projects/." },
+      { front: "How does Claude Code handle conversation history when a user switches git branches?", back: "The conversation history remains the same while the model's view of the files updates to the new branch." },
+      { front: "How can a user run multiple independent Claude sessions for different branches simultaneously?", back: "By using git worktrees to create separate directories for each individual branch." },
+      { front: "What command allows a user to continue a previous session using its specific ID?", back: "claude --resume." },
+      { front: "What is the function of the --fork-session flag?", back: "It creates a new session ID that preserves the current conversation history without affecting the original session." },
+      { front: "What is the consequence of resuming the same session ID in two different terminal windows?", back: "Messages from both terminals get interleaved and jumbled in the session history file." },
+      { front: "What data components are typically stored within Claude's context window?", back: "Conversation history, file contents, command outputs, CLAUDE.md, auto memory, and skills." },
+      { front: "In what order does Claude Code remove data during automatic context compaction?", back: "It clears older tool outputs first, then summarizes the conversation history." },
+      { front: "How can a user explicitly trigger context compaction focused on a specific topic?", back: "By running the /compact command followed by a focus area." },
+      { front: "What does a 'thrashing error' indicate during context management?", back: "A tool output or file is so large that context refills immediately after every attempt to summarize it." },
+      { front: "How can a user prevent a skill's full content from consuming context before it is needed?", back: "Set the configuration 'disable-model-invocation' to true." },
+      { front: "Why do subagents help prevent context window bloat in long-running sessions?", back: "They operate in their own fresh context and only return a summary to the main session." },
+      { front: "What keyboard shortcut allows a user to undo file changes and rewind a session?", back: "Press the Escape key twice." },
+      { front: "Why are Claude's checkpoints unable to undo actions involving remote systems or APIs?", back: "Checkpoints are local snapshots of file contents only and do not track external side effects." },
+      { front: "What is the default behavior of Claude Code regarding file edits and shell commands?", back: "Claude asks for user permission before performing any file edits or executing shell commands." },
+      { front: "How does 'Auto-accept edits' mode change Claude's permissions?", back: "Claude performs file edits and common filesystem commands without asking, but still requests permission for other commands." },
+      { front: "What is the limitation of 'Plan mode' in terms of tool usage?", back: "Claude is restricted to using read-only tools to analyze the project without making changes." },
+      { front: "Where can a user whitelist specific trusted commands to run without manual approval?", back: "In the .claude/settings.json file." },
+      { front: "Which command is used to walk through the creation of a CLAUDE.md file?", back: "/init." },
+      { front: "What is the purpose of the /doctor command?", back: "It diagnoses and identifies common issues with the Claude Code installation." },
+      { front: "How should a user handle a situation where Claude Code is pursuing an incorrect approach?", back: "Interrupt the agent immediately by typing a correction and pressing Enter." },
+      { front: "What strategy helps Claude Code succeed on the first attempt without excessive steering?", back: "Providing a specific upfront prompt that references files, constraints, and example patterns." },
+      { front: "Why is it beneficial to provide Claude with test cases or UI screenshots?", back: "It gives the agent a specific baseline to verify its work against after implementation." },
+      { front: "What is the benefit of the 'Delegate, don't dictate' workflow strategy?", back: "It allows the agent to figure out necessary files and commands autonomously based on high-level context." },
+      { front: "Which command displays what is currently occupying space in the context window?", back: "/context." },
+      { front: "What happens to session-scoped permissions when a user resumes or forks a session?", back: "Permissions are not inherited and the user must re-approve actions for the new session." },
+      { front: "The ability of Claude to see the whole project rather than just the active file is a key difference from _____.", back: "Inline code assistants." },
+      { front: "In the agentic loop, tool use returns information that informs the model's next _____.", back: "Decision or action." },
+      { front: "Claude Code can fetch documentation and look up error messages using tools in the _____ category.", back: "Web." },
+      { front: "The markdown file used for project-specific instructions is called _____.", back: "CLAUDE.md." },
+      { front: "When using 'Plan mode', you can cycle through permission modes by pressing _____.", back: "Shift+Tab." },
+      { front: "To help manage context, MCP tool definitions are _____ by default and loaded on demand.", back: "Deferred." },
+      { front: "Concept: Agentic Loop", back: "Definition: A continuous cycle where an AI assistant gathers context, takes action via tools, and verifies results to complete a task." },
+      { front: "Concept: Auto Memory", back: "Definition: A system that automatically records project patterns and user preferences in MEMORY.md to persist knowledge across sessions." },
+      { front: "Concept: Session ID", back: "Definition: A unique identifier for a conversation used to resume, fork, or track history in the ~/.claude/projects directory." },
+      { front: "Process: Resuming a Session", back: "Step: Execute 'claude --resume', select the session from the picker, and re-approve any required permissions." },
+      { front: "Process: Verifying code changes", back: "Step: Claude runs the test suite or executes commands to confirm the edited code functions as expected." },
     ]
   }
 ];
