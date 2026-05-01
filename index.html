@@ -82,6 +82,25 @@
       color: #b3b3b3;
     }
 
+    #deck-description {
+      font-size: 0.8rem;
+      color: #b3b3b3;
+      line-height: 1.5;
+      text-align: center;
+    }
+
+    #deck-source {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: #1DB954;
+      text-decoration: none;
+      letter-spacing: 0.03em;
+    }
+
+    #deck-source:hover {
+      text-decoration: underline;
+    }
+
     /* — Study view — */
     #study-view {
       width: 100%;
@@ -279,6 +298,8 @@
       <button id="prev">&#8592; Prev</button>
       <button id="next">Next &#8594;</button>
     </div>
+    <p id="deck-description"></p>
+    <a id="deck-source" href="#" target="_blank" rel="noopener">Source ↗</a>
   </div>
 
 </div>
@@ -287,6 +308,8 @@
 const DECKS = [
   {
     title: "Claude Code Best Practices",
+    description: "The provided text outlines efficient strategies for utilising Claude Code, an agentic development tool capable of autonomous file manipulation and command execution. It emphasises the critical importance of context management, noting that performance can diminish as the conversation window reaches its capacity. Users are encouraged to provide clear verification criteria, such as automated tests or visual screenshots, to ensure the agent's work meets specific requirements. The documentation details various customisation features, including the use of CLAUDE.md files for persistent project rules and subagents for isolated research tasks. Furthermore, it describes advanced workflows like non-interactive modes and parallel sessions to help developers scale their productivity. Ultimately, these best practices aim to help engineers navigate the learning curve of AI-driven coding through structured planning and precise communication.",
+    sourceLink: "https://code.claude.com/docs/en/best-practices",
     cards: [
       { front: "What is the primary technical constraint that causes Claude Code's performance to degrade as a session progresses?", back: "The filling of the context window with conversation history and file data." },
       { front: "Claude Code is described as an _____ coding environment because it autonomously reads files, runs commands, and makes changes.", back: "agentic" },
@@ -330,6 +353,8 @@ const DECKS = [
   },
   {
     title: "Prompting Best Practices",
+    description: "Claude Opus 4.7 is Anthropic's most capable generally available model, excelling at long-horizon agentic work, vision, and memory tasks. The prompting guidance for it covers several key behavioral differences from prior models: it calibrates response length dynamically to task complexity rather than defaulting to a fixed verbosity; it uses the new effort parameter (with levels from low to max, and a new xhigh tier recommended for coding and agentic work) to tune reasoning depth and token usage; it tends to use tools less often in favour of more reasoning, which can be nudged via effort settings or explicit prompting; it follows instructions more literally and won't silently generalise directives across items unless told to; it has a stronger default design aesthetic (warm cream backgrounds, serif fonts, terracotta accents) that needs explicit overrides for non-editorial contexts; it spawns fewer subagents by default but this is steerable; and for code review, it filters findings more faithfully against stated severity bars, so prompts should explicitly ask for full coverage with confidence levels rather than relying on the model to self-filter.",
+    sourceLink: "https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices#prompting-claude-opus-4-7",
     cards: [
       { front: "How does Claude 4.7 determine its response length and verbosity?", back: "It calibrates length based on the judged complexity of the task." },
       { front: "Which specific effort level is recommended for coding and agentic use cases in Claude 4.7?", back: "xhigh" },
@@ -375,6 +400,8 @@ const DECKS = [
   },
   {
     title: "How Claude Code Works",
+    description: "Claude Code is an agentic artificial intelligence assistant designed to operate within a terminal to streamline development workflows. It functions through an agentic loop that allows the model to research context, execute file changes, and verify results autonomously. Beyond simple text generation, the tool utilizes built-in capabilities to manage file operations, run shell commands, and conduct web searches. Developers can interact with the system across various platforms and interfaces, including local environments, cloud-managed VMs, and popular IDE extensions. To ensure security and efficiency, the software incorporates permission modes and checkpoints that allow users to undo modifications or restrict specific actions. Ultimately, the documentation provides a comprehensive guide for optimising collaboration between human programmers and the AI agent.",
+    sourceLink: "https://code.claude.com/docs/en/how-claude-code-works",
     cards: [
       { front: "What three phases constitute the agentic loop in Claude Code?", back: "Gather context, take action, and verify results." },
       { front: "How does Claude Code function as an 'agentic harness' for the underlying model?", back: "It provides tools, context management, and an execution environment to enable autonomous action." },
@@ -430,6 +457,8 @@ const DECKS = [
   },
   {
     title: "Prompt Injection (OWASP)",
+    description: "Prompt Injection is a security vulnerability that occurs when user-provided inputs manipulate a Large Language Model (LLM) into behaving in unintended ways or producing unauthorized outputs. These vulnerabilities arise from the way models process prompts, which can lead to the model incorrectly passing data to other system components, potentially causing it to violate safety guidelines, disclose sensitive data, or enable unauthorized access",
+    sourceLink: "https://genai.owasp.org/llmrisk/llm01-prompt-injection/",
     cards: [
       { front: "What occurs during a Prompt Injection Vulnerability?", back: "User prompts alter the LLM's behavior or output in unintended ways." },
       { front: "Why do prompt injections not need to be human-visible or readable?", back: "The model parses the content even if it is imperceptible to humans." },
@@ -530,7 +559,11 @@ function loadDeck(index) {
   activeDeckIndex = index;
   deck = [...Array(DECKS[index].cards.length).keys()];
   currentIndex = 0;
-  deckTitle.textContent = DECKS[index].title;
+  const d = DECKS[index];
+  deckTitle.textContent = d.title;
+  document.getElementById('deck-description').textContent = d.description;
+  const src = document.getElementById('deck-source');
+  src.href = d.sourceLink;
   pickerView.classList.add('hidden');
   studyView.classList.remove('hidden');
   render();
