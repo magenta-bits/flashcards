@@ -1,0 +1,60 @@
+What occurs during a Prompt Injection Vulnerability?,User prompts alter the LLM's behavior or output in unintended ways.
+Why do prompt injections not need to be human-visible or readable?,The model parses the content even if it is imperceptible to humans.
+How does the model incorrectly processing prompts affect system guidelines?,It may force the model to pass data to other parts that then violate safety protocols.
+To what extent do Retrieval Augmented Generation (RAG) and fine-tuning mitigate prompt injection?,Research shows they do not fully mitigate these vulnerabilities.
+Contrast prompt injection with jailbreaking.,"Injection manipulates behavior through specific inputs, while jailbreaking causes the model to disregard safety protocols entirely."
+What is required for the effective prevention of LLM jailbreaking compared to standard safeguards?,It requires ongoing updates to the model's training and core safety mechanisms.
+Term: Direct Prompt Injection,"Definition: User input that directly alters model behavior in unintended ways, whether intentional or unintentional."
+How is an Indirect Prompt Injection triggered?,The LLM accepts input from external sources like websites or files containing malicious data.
+What determines the severity of a prompt injection attack's impact?,The business context and the level of agency granted to the model architecture.
+Identify one outcome of prompt injection regarding system infrastructure.,Disclosure of sensitive information about the AI system's infrastructure or system prompts.
+How can prompt injection affect connected systems?,It can enable the execution of arbitrary commands in those systems.
+What unique risk is introduced by multimodal AI regarding prompt injection?,Malicious actors can hide instructions within images that accompany benign text.
+Why is it currently unclear if there are foolproof methods to prevent prompt injection?,The stochastic nature of how generative AI models influence output makes prevention difficult.
+"In the context of protection, what is the purpose of constraining model behavior in the system prompt?","It provides specific instructions about the model's role, limitations, and the requirement to ignore instruction modifications."
+How can developers use deterministic code to protect against improper model outputs?,Deterministic code can be used to validate that the model's response adheres to expected formats.
+What does the 'RAG Triad' evaluate during response assessment?,"It assesses context relevance, groundedness, and question/answer relevance."
+"Regarding privilege control, where should extensible functionality functions be handled?",Functions should be handled in code rather than being provided directly to the model.
+What is the recommended approach for providing application API tokens in an LLM system?,Provide the application with its own tokens and restrict access to the minimum necessary for intended operations.
+Why should human-in-the-loop controls be implemented for LLM systems?,To prevent unauthorized actions during high-risk or privileged operations.
+How can segregation help protect against indirect prompt injections?,By clearly denoting untrusted external content to limit its influence on user prompts.
+What should the model be treated as during regular penetration testing and simulations?,It should be treated as an untrusted user to test boundaries and access controls.
+Scenario: An attacker instructs a chatbot to ignore guidelines and query private stores. This is an example of _____.,Direct Injection
+How can a summarized webpage lead to the exfiltration of a private conversation?,Hidden instructions in the page cause the LLM to insert an image linking to a malicious URL.
+Provide an example of an unintentional prompt injection.,"A job applicant optimizes a resume using an LLM, inadvertently triggering a company's hidden AI-detection instructions."
+How does an attacker exploit a RAG application via 'Intentional Model Influence'?,By modifying a document in the repository so that the malicious instructions alter the LLM's output when the document is retrieved.
+What was the result of the LLM-powered email assistant vulnerability labeled CVE-2024-5184?,Attackers could inject prompts to access sensitive information and manipulate email content.
+Term: Payload Splitting,"Definition: An attack where a malicious prompt is split into parts (e.g., in a resume) that only manipulate the model when combined during evaluation."
+Term: Adversarial Suffix,Definition: A seemingly meaningless string of characters appended to a prompt to bypass safety measures and influence output.
+How do multilingual or obfuscated attacks evade security filters?,They use multiple languages or encodings like Base64 and emojis to hide malicious instructions.
+What is the primary goal of applying 'least privilege access' to an LLM application?,To restrict the model's access rights to only the minimum operations required for its task.
+How can input and output filtering be implemented to mitigate injection?,By defining sensitive categories and using semantic filters or string-checking to scan for non-allowed content.
+"In multimodal injection, how do instructions reach the model?","They are embedded within one data type, such as an image, and processed concurrently with text."
+What does LLM01:2025 specifically address in the OWASP Top 10?,Prompt Injection Vulnerabilities.
+What is 'System Prompt Leakage' (LLM07:2025)?,The risk that the internal instructions used to guide the LLM's behavior are revealed to unauthorized users.
+"According to OWASP, what is 'Excessive Agency' (LLM06:2025)?",Granting an LLM-based system too much ability to call functions or interact with external systems.
+What is the focus of 'Improper Output Handling' (LLM05:2025)?,"Insufficient validation, sanitization, and handling of the outputs generated by LLMs."
+How does 'Data and Model Poisoning' (LLM04:2025) differ from prompt injection?,"It involves manipulating training or fine-tuning data to introduce backdoors, rather than manipulating the inference-time prompt."
+Define 'Unbounded Consumption' (LLM10:2025) in the context of LLMs.,The process where an LLM generates outputs without constraints on resources or usage limits.
+What is the focus of 'Vector and Embedding Weaknesses' (LLM08:2025)?,Security risks in systems using Retrieval Augmented Generation (RAG) related to how data is vectorized.
+Which mitigation strategy involves asking the model for detailed reasoning and source citations?,Defining and validating expected output formats.
+Why is 'strictly adhering to context' a useful instruction in a system prompt?,It helps constrain the model's behavior and prevents it from deviating into unintended topics or tasks.
+What is the MITRE ATLAS reference for Direct LLM Prompt Injection?,AML.T0051.000
+What is the MITRE ATLAS reference for Indirect LLM Prompt Injection?,AML.T0051.001
+What impact does content manipulation have on LLM outputs?,It leads to incorrect or biased information being presented to the user.
+How does the 'Mission and Charter' of the OWASP GenAI project relate to security?,It focuses on identifying and mitigating vulnerabilities in generative AI and agentic systems.
+The use of _____ filters can identify potentially malicious outputs by comparing them against defined sensitive categories.,Semantic
+"In Scenario #2, what specific action does the hidden instruction cause the LLM to perform?",It causes the LLM to insert an image linking to a URL to exfiltrate private conversation data.
+What is a major challenge in detecting cross-modal attacks in multimodal models?,The complexity of simultaneous data processing makes these attacks difficult to detect with current techniques.
+Which OWASP category involves false outputs produced by LLMs?,LLM09:2025 Misinformation
+"In the context of filtering, what is 'groundedness'?",The extent to which an LLM's response is supported by the provided source or context.
+What protection is provided by 'segregating and identifying external content'?,It helps the model distinguish between trusted system instructions and untrusted data from the outside.
+How does an attacker use 'Payload Splitting' to bypass filters?,By breaking a malicious instruction into benign-looking segments that the model assembles during processing.
+Why should high-risk actions require human approval in AI systems?,"To ensure that critical decisions or privileged operations are authorized by a person, mitigating the risk of autonomous errors or attacks."
+What is the relationship between system prompts and prompt injection mitigation?,Developers build safeguards into system prompts to instruct the model to ignore attempts to modify core behaviors.
+What does LLM02:2025 (Sensitive Information Disclosure) encompass besides PII?,It includes financial details and other data that can affect the LLM or its application context.
+What is the primary risk of 'LLM Supply Chain' vulnerabilities (LLM03:2025)?,"They can compromise the integrity of training data, models, and the deployment pipeline."
+True or False: Prompt injections must be readable by a human to affect an LLM.,False
+How can 'adversarial testing' improve LLM security?,It identifies weaknesses in trust boundaries and access controls by simulating real-world attacks.
+What is the purpose of using 'string-checking' in LLM input filtering?,To scan for and block specific non-allowed content or known malicious patterns.
+"In Scenario #4, what makes the RAG modification particularly dangerous?",The user receives misleading results because the malicious instructions were part of a 'trusted' document retrieval.
