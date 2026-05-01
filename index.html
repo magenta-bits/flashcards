@@ -29,46 +29,100 @@
       gap: 1.25rem;
     }
 
-    h1 {
+    .hidden { display: none !important; }
+
+    /* — Picker view — */
+    #picker-view {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    #picker-view h1 {
+      font-size: 1.75rem;
+      font-weight: 800;
+      color: #ffffff;
+      letter-spacing: -0.01em;
+      text-transform: none;
+    }
+
+    #deck-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1rem;
+      width: 100%;
+    }
+
+    .deck-card {
+      background: #181818;
+      border-radius: 12px;
+      padding: 1.5rem 1.5rem 1.5rem 1.25rem;
+      cursor: pointer;
+      border-left: 3px solid #1DB954;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+      transition: background 0.15s, transform 0.15s, box-shadow 0.15s;
+    }
+
+    .deck-card:hover {
+      background: #282828;
+      transform: translateY(-3px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+    }
+
+    .deck-card-title {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #ffffff;
+      margin-bottom: 0.4rem;
+    }
+
+    .deck-card-count {
+      font-size: 0.8rem;
+      color: #b3b3b3;
+    }
+
+    /* — Study view — */
+    #study-view {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1.25rem;
+    }
+
+    #study-header {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    #back-btn {
+      background: transparent;
+      border: 1px solid #535353;
+      color: #b3b3b3;
+      font-size: 0.75rem;
+      padding: 0.35rem 0.9rem;
+      flex-shrink: 0;
+      letter-spacing: 0.04em;
+    }
+
+    #back-btn:hover {
+      background: #282828;
+      border-color: #b3b3b3;
+      color: #ffffff;
+      transform: none;
+    }
+
+    #deck-title {
       font-size: 0.75rem;
       font-weight: 700;
       color: #b3b3b3;
       letter-spacing: 0.1em;
       text-transform: uppercase;
-    }
-
-    #deck-tabs {
-      display: flex;
-      gap: 0.5rem;
-      width: 100%;
-    }
-
-    .deck-tab {
       flex: 1;
-      background: transparent;
-      border: 2px solid #535353;
-      color: #b3b3b3;
-      font-size: 0.8rem;
-      font-weight: 600;
-      padding: 0.45rem 0.75rem;
-      border-radius: 500px;
-      cursor: pointer;
-      transition: background 0.15s, border-color 0.15s, color 0.15s, transform 0.15s;
-      font-family: inherit;
-      text-align: center;
-    }
-
-    .deck-tab:hover {
-      background: #282828;
-      border-color: #b3b3b3;
-      color: #ffffff;
-      transform: scale(1.02);
-    }
-
-    .deck-tab.active {
-      background: rgba(29, 185, 84, 0.15);
-      border-color: #1DB954;
-      color: #1DB954;
+      text-align: right;
     }
 
     #progress-bar-container {
@@ -163,11 +217,6 @@
       gap: 0.75rem;
     }
 
-    #actions {
-      display: flex;
-      gap: 0.75rem;
-    }
-
     button {
       background: #333333;
       border: none;
@@ -200,34 +249,38 @@
 </head>
 <body>
 <div id="app">
-  <h1 id="deck-title">Claude Code Best Practices</h1>
-  <div id="deck-tabs">
-    <button class="deck-tab active" data-deck="0">Claude Code Best Practices</button>
-    <button class="deck-tab" data-deck="1">Prompting Best Practices</button>
-    <button class="deck-tab" data-deck="2">How Claude Code Works</button>
-    <button class="deck-tab" data-deck="3">Prompt Injection (OWASP)</button>
+
+  <!-- Deck picker -->
+  <div id="picker-view">
+    <h1>Flashcards</h1>
+    <div id="deck-grid"></div>
   </div>
-  <div id="progress-bar-container"><div id="progress-bar"></div></div>
-  <div id="card-container">
-    <div id="card">
-      <div class="face front">
-        <p id="front-text"></p>
-        <span class="hint">Click to reveal answer</span>
-      </div>
-      <div class="face back">
-        <p id="back-text"></p>
+
+  <!-- Study view -->
+  <div id="study-view" class="hidden">
+    <div id="study-header">
+      <button id="back-btn">&#8592; All Decks</button>
+      <span id="deck-title"></span>
+    </div>
+    <div id="progress-bar-container"><div id="progress-bar"></div></div>
+    <div id="card-container">
+      <div id="card">
+        <div class="face front">
+          <p id="front-text"></p>
+          <span class="hint">Click to reveal answer</span>
+        </div>
+        <div class="face back">
+          <p id="back-text"></p>
+        </div>
       </div>
     </div>
+    <div id="counter"></div>
+    <div id="nav">
+      <button id="prev">&#8592; Prev</button>
+      <button id="next">Next &#8594;</button>
+    </div>
   </div>
-  <div id="counter"></div>
-  <div id="nav">
-    <button id="prev">&#8592; Prev</button>
-    <button id="next">Next &#8594;</button>
-  </div>
-  <div id="actions">
-    <button id="shuffle">Shuffle</button>
-    <button id="reset">Reset Order</button>
-  </div>
+
 </div>
 
 <script>
@@ -453,15 +506,33 @@ const backText = document.getElementById('back-text');
 const counter = document.getElementById('counter');
 const progressBar = document.getElementById('progress-bar');
 const deckTitle = document.getElementById('deck-title');
+const pickerView = document.getElementById('picker-view');
+const studyView = document.getElementById('study-view');
+
+function renderDeckGrid() {
+  const grid = document.getElementById('deck-grid');
+  grid.innerHTML = '';
+  DECKS.forEach((d, i) => {
+    const el = document.createElement('div');
+    el.className = 'deck-card';
+    el.innerHTML = `<div class="deck-card-title">${d.title}</div><div class="deck-card-count">${d.cards.length} cards</div>`;
+    el.addEventListener('click', () => loadDeck(i));
+    grid.appendChild(el);
+  });
+}
+
+function showPicker() {
+  studyView.classList.add('hidden');
+  pickerView.classList.remove('hidden');
+}
 
 function loadDeck(index) {
   activeDeckIndex = index;
   deck = [...Array(DECKS[index].cards.length).keys()];
   currentIndex = 0;
   deckTitle.textContent = DECKS[index].title;
-  document.querySelectorAll('.deck-tab').forEach((btn, i) => {
-    btn.classList.toggle('active', i === index);
-  });
+  pickerView.classList.add('hidden');
+  studyView.classList.remove('hidden');
   render();
 }
 
@@ -475,16 +546,7 @@ function render() {
   isFlipped = false;
 }
 
-function shuffle(arr) {
-  for (let i = arr.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [arr[i], arr[j]] = [arr[j], arr[i]];
-  }
-}
-
-document.querySelectorAll('.deck-tab').forEach((btn) => {
-  btn.addEventListener('click', () => loadDeck(parseInt(btn.dataset.deck)));
-});
+document.getElementById('back-btn').addEventListener('click', showPicker);
 
 card.addEventListener('click', () => {
   isFlipped = !isFlipped;
@@ -499,19 +561,8 @@ document.getElementById('next').addEventListener('click', () => {
   if (currentIndex < deck.length - 1) { currentIndex++; render(); }
 });
 
-document.getElementById('shuffle').addEventListener('click', () => {
-  shuffle(deck);
-  currentIndex = 0;
-  render();
-});
-
-document.getElementById('reset').addEventListener('click', () => {
-  deck = [...Array(DECKS[activeDeckIndex].cards.length).keys()];
-  currentIndex = 0;
-  render();
-});
-
 document.addEventListener('keydown', (e) => {
+  if (studyView.classList.contains('hidden')) return;
   if (e.key === 'ArrowLeft') {
     if (currentIndex > 0) { currentIndex--; render(); }
   } else if (e.key === 'ArrowRight') {
@@ -523,7 +574,7 @@ document.addEventListener('keydown', (e) => {
   }
 });
 
-loadDeck(0);
+renderDeckGrid();
 </script>
 </body>
 </html>
