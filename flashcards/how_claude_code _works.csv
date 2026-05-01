@@ -1,0 +1,50 @@
+What three phases constitute the agentic loop in Claude Code?,"Gather context, take action, and verify results."
+How does Claude Code function as an 'agentic harness' for the underlying model?,"It provides tools, context management, and an execution environment to enable autonomous action."
+Which Claude model is optimized for the majority of standard coding tasks?,Claude Sonnet.
+When should a developer switch to using Claude Opus within Claude Code?,When a task requires stronger reasoning for complex architectural decisions.
+Identify the command used to switch between different models during an active session.,/model.
+Into what five categories do the built-in Claude Code tools generally fall?,"File operations, search, execution, web, and code intelligence."
+What does Claude Code's 'Search' tool category allow the agent to do?,"Find files by pattern, search content with regex, and explore codebases."
+Under what condition can Claude access files located outside the current project directory?,It can only access external files with explicit user permission.
+What specific git-related data is available to Claude Code by default?,"The current branch, uncommitted changes, and recent commit history."
+What is the purpose of the project-specific CLAUDE.md file?,"It stores persistent instructions, conventions, and context for Claude to use in every session."
+How much of the MEMORY.md file is loaded at the start of a session?,"The first 200 lines or 25KB, whichever limit is reached first."
+Which execution environment runs Claude Code on Anthropic-managed virtual machines?,The Cloud environment.
+How does the 'Remote Control' environment differ from the standard local environment?,It allows the user to interact via a browser UI while executing code on their local machine.
+Where does Claude Code store local session conversation history?,In plaintext JSONL files located under ~/.claude/projects/.
+How does Claude Code handle conversation history when a user switches git branches?,The conversation history remains the same while the model's view of the files updates to the new branch.
+How can a user run multiple independent Claude sessions for different branches simultaneously?,By using git worktrees to create separate directories for each individual branch.
+What command allows a user to continue a previous session using its specific ID?,claude --resume.
+What is the function of the --fork-session flag?,It creates a new session ID that preserves the current conversation history without affecting the original session.
+What is the consequence of resuming the same session ID in two different terminal windows?,Messages from both terminals get interleaved and jumbled in the session history file.
+What data components are typically stored within Claude's context window?,"Conversation history, file contents, command outputs, CLAUDE.md, auto memory, and skills."
+In what order does Claude Code remove data during automatic context compaction?,"It clears older tool outputs first, then summarizes the conversation history."
+How can a user explicitly trigger context compaction focused on a specific topic?,By running the /compact command followed by a focus area.
+What does a 'thrashing error' indicate during context management?,A tool output or file is so large that context refills immediately after every attempt to summarize it.
+How can a user prevent a skill's full content from consuming context before it is needed?,Set the configuration 'disable-model-invocation' to true.
+Why do subagents help prevent context window bloat in long-running sessions?,They operate in their own fresh context and only return a summary to the main session.
+What keyboard shortcut allows a user to undo file changes and rewind a session?,Press the Escape key twice.
+Why are Claude's checkpoints unable to undo actions involving remote systems or APIs?,Checkpoints are local snapshots of file contents only and do not track external side effects.
+What is the default behavior of Claude Code regarding file edits and shell commands?,Claude asks for user permission before performing any file edits or executing shell commands.
+How does 'Auto-accept edits' mode change Claude's permissions?,"Claude performs file edits and common filesystem commands without asking, but still requests permission for other commands."
+What is the limitation of 'Plan mode' in terms of tool usage?,Claude is restricted to using read-only tools to analyze the project without making changes.
+Where can a user whitelist specific trusted commands to run without manual approval?,In the .claude/settings.json file.
+Which command is used to walk through the creation of a CLAUDE.md file?,/init.
+What is the purpose of the /doctor command?,It diagnoses and identifies common issues with the Claude Code installation.
+How should a user handle a situation where Claude Code is pursuing an incorrect approach?,Interrupt the agent immediately by typing a correction and pressing Enter.
+What strategy helps Claude Code succeed on the first attempt without excessive steering?,"Providing a specific upfront prompt that references files, constraints, and example patterns."
+Why is it beneficial to provide Claude with test cases or UI screenshots?,It gives the agent a specific baseline to verify its work against after implementation.
+"What is the benefit of the 'Delegate, don't dictate' workflow strategy?",It allows the agent to figure out necessary files and commands autonomously based on high-level context.
+Which command displays what is currently occupying space in the context window?,/context.
+What happens to session-scoped permissions when a user resumes or forks a session?,Permissions are not inherited and the user must re-approve actions for the new session.
+The ability of Claude to see the whole project rather than just the active file is a key difference from _____.,Inline code assistants.
+"In the agentic loop, tool use returns information that informs the model's next _____.",Decision or action.
+Claude Code can fetch documentation and look up error messages using tools in the _____ category.,Web.
+The markdown file used for project-specific instructions is called _____.,CLAUDE.md.
+"When using 'Plan mode', you can cycle through permission modes by pressing _____.",Shift+Tab.
+"To help manage context, MCP tool definitions are _____ by default and loaded on demand.",Deferred.
+Concept: Agentic Loop,"Definition: A continuous cycle where an AI assistant gathers context, takes action via tools, and verifies results to complete a task."
+Concept: Auto Memory,Definition: A system that automatically records project patterns and user preferences in MEMORY.md to persist knowledge across sessions.
+Concept: Session ID,"Definition: A unique identifier for a conversation used to resume, fork, or track history in the ~/.claude/projects directory."
+Process: Resuming a Session,"Step: Execute 'claude --resume', select the session from the picker, and re-approve any required permissions."
+Process: Verifying code changes,Step: Claude runs the test suite or executes commands to confirm the edited code functions as expected.
