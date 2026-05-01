@@ -82,19 +82,64 @@
       color: #b3b3b3;
     }
 
+    #deck-info {
+      width: 100%;
+      background: #181818;
+      border-radius: 12px;
+      border-left: 3px solid #1DB954;
+    }
+
+    #deck-info summary {
+      list-style: none;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1rem 1.5rem;
+      cursor: pointer;
+      user-select: none;
+      font-size: 0.65rem;
+      font-weight: 700;
+      color: #535353;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    #deck-info summary::-webkit-details-marker { display: none; }
+
+    #deck-info summary::after {
+      content: '›';
+      font-size: 1rem;
+      color: #535353;
+      transform: rotate(90deg);
+      transition: transform 0.2s ease;
+      display: inline-block;
+      line-height: 1;
+    }
+
+    #deck-info[open] summary::after {
+      transform: rotate(270deg);
+    }
+
+    #deck-info-body {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      padding: 0 1.5rem 1.25rem;
+    }
+
     #deck-description {
-      font-size: 0.8rem;
+      font-size: 0.875rem;
       color: #b3b3b3;
-      line-height: 1.5;
-      text-align: center;
+      line-height: 1.6;
     }
 
     #deck-source {
-      font-size: 0.75rem;
+      font-size: 0.8rem;
       font-weight: 600;
       color: #1DB954;
       text-decoration: none;
       letter-spacing: 0.03em;
+      align-self: flex-start;
     }
 
     #deck-source:hover {
@@ -298,8 +343,13 @@
       <button id="prev">&#8592; Prev</button>
       <button id="next">Next &#8594;</button>
     </div>
-    <p id="deck-description"></p>
-    <a id="deck-source" href="#" target="_blank" rel="noopener">Source ↗</a>
+    <details id="deck-info">
+      <summary>About this deck</summary>
+      <div id="deck-info-body">
+        <p id="deck-description"></p>
+        <a id="deck-source" href="#" target="_blank" rel="noopener">Source ↗</a>
+      </div>
+    </details>
   </div>
 
 </div>
