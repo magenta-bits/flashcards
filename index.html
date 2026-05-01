@@ -4,13 +4,15 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Claude Code Flashcards</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
-      background: #0d1117;
-      color: #e6edf3;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+      background: #121212;
+      color: #ffffff;
+      font-family: 'Montserrat', sans-serif;
       min-height: 100vh;
       display: flex;
       align-items: center;
@@ -28,10 +30,10 @@
     }
 
     h1 {
-      font-size: 1rem;
-      font-weight: 600;
-      color: #8b949e;
-      letter-spacing: 0.04em;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: #b3b3b3;
+      letter-spacing: 0.1em;
       text-transform: uppercase;
     }
 
@@ -43,42 +45,44 @@
 
     .deck-tab {
       flex: 1;
-      background: #161b22;
-      border: 1px solid #30363d;
-      color: #8b949e;
+      background: transparent;
+      border: 2px solid #535353;
+      color: #b3b3b3;
       font-size: 0.8rem;
+      font-weight: 600;
       padding: 0.45rem 0.75rem;
-      border-radius: 6px;
+      border-radius: 500px;
       cursor: pointer;
-      transition: background 0.15s, border-color 0.15s, color 0.15s;
+      transition: background 0.15s, border-color 0.15s, color 0.15s, transform 0.15s;
       font-family: inherit;
       text-align: center;
     }
 
     .deck-tab:hover {
-      background: #21262d;
-      border-color: #8b949e;
-      color: #e6edf3;
+      background: #282828;
+      border-color: #b3b3b3;
+      color: #ffffff;
+      transform: scale(1.02);
     }
 
     .deck-tab.active {
-      background: #1f3a5f;
-      border-color: #58a6ff;
-      color: #58a6ff;
+      background: rgba(29, 185, 84, 0.15);
+      border-color: #1DB954;
+      color: #1DB954;
     }
 
     #progress-bar-container {
       width: 100%;
-      height: 4px;
-      background: #21262d;
-      border-radius: 2px;
+      height: 6px;
+      background: #333333;
+      border-radius: 3px;
       overflow: hidden;
     }
 
     #progress-bar {
       height: 100%;
-      background: #58a6ff;
-      border-radius: 2px;
+      background: #1DB954;
+      border-radius: 3px;
       transition: width 0.3s ease;
     }
 
@@ -86,6 +90,11 @@
       width: 100%;
       perspective: 1200px;
       cursor: pointer;
+      transition: filter 0.2s ease;
+    }
+
+    #card-container:hover {
+      filter: brightness(1.05);
     }
 
     #card {
@@ -107,7 +116,8 @@
       backface-visibility: hidden;
       -webkit-backface-visibility: hidden;
       border-radius: 12px;
-      border: 1px solid #30363d;
+      border: none;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
       padding: 2rem 2rem 3rem;
       display: flex;
       align-items: center;
@@ -116,31 +126,27 @@
     }
 
     .face.front {
-      background: #161b22;
+      background: #181818;
     }
 
     .face.back {
-      background: #1a2233;
-      border-color: #2d3a50;
+      background: #282828;
       transform: rotateY(180deg);
     }
 
     .face p {
       font-size: 1.15rem;
+      font-weight: 400;
       line-height: 1.6;
       text-align: center;
-      color: #e6edf3;
-    }
-
-    .face.back p {
-      color: #cdd9e5;
+      color: #ffffff;
     }
 
     .hint {
       position: absolute;
       bottom: 0.9rem;
       font-size: 0.75rem;
-      color: #484f58;
+      color: #535353;
       letter-spacing: 0.03em;
       pointer-events: none;
     }
@@ -149,7 +155,7 @@
 
     #counter {
       font-size: 0.875rem;
-      color: #8b949e;
+      color: #b3b3b3;
     }
 
     #nav {
@@ -163,24 +169,27 @@
     }
 
     button {
-      background: #21262d;
-      border: 1px solid #30363d;
-      color: #e6edf3;
+      background: #333333;
+      border: none;
+      color: #ffffff;
       font-size: 0.875rem;
-      padding: 0.5rem 1.25rem;
-      border-radius: 6px;
+      font-weight: 700;
+      padding: 0.5rem 1.5rem;
+      border-radius: 500px;
       cursor: pointer;
-      transition: background 0.15s, border-color 0.15s;
+      transition: background 0.15s, transform 0.15s;
       font-family: inherit;
+      letter-spacing: 0.04em;
     }
 
     button:hover {
-      background: #30363d;
-      border-color: #8b949e;
+      background: #3e3e3e;
+      transform: scale(1.04);
     }
 
     button:active {
-      background: #3c444d;
+      background: #535353;
+      transform: scale(0.98);
     }
 
     @media (max-width: 480px) {
